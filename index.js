@@ -6,7 +6,7 @@ app.use(cors());
 app.use(express.json());
 
 const dbconnect = require('./connection');
-const port = 8000;
+const port = 8000 || process.env.PORT;
 dbconnect();
 const loginRoute = require("./routes/loginResistraion");
 const PostRoute = require("./routes/postroute");
