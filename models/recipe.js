@@ -15,10 +15,10 @@ const recipeSchema = new schema({
         required : true
     },
     ingredients: {
-        type : Array,
+        type : String,
         required : true
     },
-    directions: {
+    description: {
         type : String,
         required : true
     },

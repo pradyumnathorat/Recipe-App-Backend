@@ -1,36 +1,45 @@
 const express = require('express');
-const multer = require('multer');
+
 const recipeModel = require('../models/recipe');
-// const { body, validationResult } = require('express-validator');
+
+
 const router = express.Router();
 router.use(express.json());
-const fileupload = require('express-fileupload');
-router.use(fileupload());
 
 
 
-router.post("/recipe/:userID",async (req, res) => {
-    const { title, author , ingredients , directions , url } = req.body;
-    const user = req.params.userID;
-    const recipe = new recipeModel({
-        ...{ title, author , ingredients , directions , url , user}
+
+router.post('/upload', async (req, res) => {
+  try {
+    const { title, author, ingredients, description, url } = req.body;
+    console.log(req.body);
+    const recipe = await recipeModel.create({
+      title: title,
+      author: author,
+      ingredients: ingredients,
+      description: description,
+      url: url,
+      user: req.user.data
     })
-    try {
-        const response = await recipe.save();
-        res.status(200).json({ message: "Recipe is created", response })
-    } catch (error) {
-        res.status(500).json( {error :'Something went wrong'} )
-    }
-})
+    return res.send({ message: 'File uploaded successfully.' });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message
+    })
+  }
+});
 
-
-router.get("/user/recipe/:userID",async(req,res)=>{
-    try {
-        let recipes = await recipeModel.find({user: req.params.userID});
-        res.send(recipes);
-    }catch(error){
-        res.json({ error: 'Something went wrong' })
-    }
+router.get('/upload', async (req, res) => {
+  try {
+    const recipies = await recipeModel.find({ user: req.user.data });
+    res.status(200).json({
+      data: recipies
+    })
+  } catch (err) {
+    res.status(500).json({
+      error: err.message
+    })
+  }
 })
 
 module.exports = router;
